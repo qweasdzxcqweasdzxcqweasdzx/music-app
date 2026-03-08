@@ -46,7 +46,7 @@ const Search = () => {
     const timer = setTimeout(() => {
       if (query.trim()) {
         setIsSearching(true);
-        fetch(`http://192.168.31.97:8000/api/search?q=${encodeURIComponent(query)}`)
+        fetch(`https://excluding-careful-baker-src.trycloudflare.com/api/search?q=${encodeURIComponent(query)}`)
           .then(res => res.json())
           .then(data => {
             setSearchResults(data);

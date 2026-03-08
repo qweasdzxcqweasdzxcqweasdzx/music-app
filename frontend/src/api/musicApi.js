@@ -3,8 +3,8 @@
  * SoundCloud API + Telegram Mini Apps
  */
 
-// URL для подключения к серверу - всегда абсолютный!
-const API_URL = 'http://192.168.31.97:8000/api';
+// HTTPS URL через Cloudflare Tunnel
+const API_URL = 'https://excluding-careful-baker-src.trycloudflare.com/api';
 
 class MusicAPI {
   constructor() {

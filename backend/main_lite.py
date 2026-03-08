@@ -59,10 +59,15 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS
+# CORS - РАЗРЕШАЕМ ВСЕ ДОМЕНЫ (для GitHub Pages)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://qweasdzxcqweasdzxcqweasdzx.github.io",
+        "https://*.github.io",
+        "https://telegram.org",
+        "*"  # Разрешаем все для отладки
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

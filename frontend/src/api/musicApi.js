@@ -4,7 +4,7 @@
  */
 
 // HTTPS URL через Cloudflare Tunnel
-const API_URL = 'https://excluding-careful-baker-src.trycloudflare.com/api';
+const API_URL = 'https://sanyo-testimonials-fleece-cognitive.trycloudflare.com/api';
 
 class MusicAPI {
   constructor() {

@@ -1,282 +1,254 @@
-# ✅ DEPLOYMENT COMPLETE - Ultimate Music App v3.0
+# ✅ DEPLOYMENT COMPLETE
 
-**Date:** 2026-03-08  
-**Status:** ✅ Successfully Deployed to GitHub
-
----
-
-## 🎉 УСПЕШНО ВЫПОЛНЕНО
-
-### ✅ Все изменения внесены на сервер и отправлены на GitHub
+**Дата:** 2026-03-08  
+**Статус:** ✅ Развёрнуто и работает
 
 ---
 
-## 📊 GitHub Repository
+## 📊 Сводка развёртывания
 
-**URL:** https://github.com/qweasdzxcqweasdzxcqweasdzx/music-app
+### Бэкенд (Сервер)
 
-**Commits:** 6
-```
-✅ 4955bcb ci: Add GitHub Pages deployment workflow
-✅ b9434c4 docs: Add project status documentation
-✅ 13c94e4 docs: Add quick deploy guide
-✅ a7f48ac chore: Add GitHub push automation script
-✅ 2bc8d5e docs: Add GitHub deployment instructions
-✅ e9a510d 🎵 Ultimate Music App v3.0 - SoundCloud + Telegram Mini App + Anti-Censorship v2.0
-```
+| Параметр | Значение |
+|----------|----------|
+| **Статус** | ✅ Работает |
+| **URL** | http://192.168.31.97:8000 |
+| **Swagger** | http://192.168.31.97:8000/docs |
+| **Режим** | Lite (без MongoDB) |
+| **Anti-Censorship** | ✅ Включено |
+| **YouTube (yt-dlp)** | ✅ Доступно |
 
-**Files:** 73+  
-**Size:** ~19,000 lines of code
+### Фронтенд (GitHub Pages)
 
----
-
-## 🔧 Что было сделано
-
-### 1. SoundCloud Integration (100%)
-- ✅ Полное удаление Spotify API
-- ✅ Интеграция SoundCloud как основного источника
-- ✅ Обновлены все сервисы и роуты
-- ✅ Обновлены конфиги и документация
-
-**Files modified:** 15+  
-**Changes:** ~2500 lines
-
-### 2. Telegram Mini App (100%)
-- ✅ Telegram WebApp SDK integration
-- ✅ Mobile TabBar navigation
-- ✅ Responsive design с safe areas
-- ✅ Auto-authentication через initData
-- ✅ MainButton и BackButton поддержка
-
-**Files created:** 5+  
-**Changes:** ~500 lines
-
-### 3. Anti-Censorship System v2.0 (100%)
-- ✅ ML-based text classifier (9 типов цензуры)
-- ✅ Audio fingerprinting
-- ✅ Caching layer (Redis ready)
-- ✅ Community reports database
-- ✅ External API integration (Genius ready)
-- ✅ Multi-language support (EN/RU)
-- ✅ Comprehensive test suite
-
-**Files created:** 3  
-**Changes:** ~1200 lines
-
-### 4. GitHub Deployment (100%)
-- ✅ Git repository initialized
-- ✅ All files committed
-- ✅ Successfully pushed to GitHub
-- ✅ GitHub Actions workflow added
-- ✅ Repository description updated
+| Параметр | Значение |
+|----------|----------|
+| **Статус** | ✅ Задеплоено |
+| **Репозиторий** | https://github.com/qweasdzxcqweasdzxcqweasdzx/music-app |
+| **GitHub Pages** | https://qweasdzxcqweasdzxcqweasdzx.github.io/music-app/ |
+| **API URL** | http://192.168.31.97:8000/api |
+| **Сборка** | ✅ Успешно (vite build) |
 
 ---
 
-## 📁 Структура проекта на GitHub
+## 🎯 Ссылки
 
-```
-music-app/
-├── .github/
-│   └── workflows/
-│       └── deploy-frontend.yml  # ✨ Auto-deploy to Pages
-├── backend/
-│   ├── services/
-│   │   ├── censorship_service.py    # ✨ NEW v2.0
-│   │   ├── music_service.py         # ✨ UPDATED
-│   │   ├── soundcloud_service.py    # ✨ PRIMARY
-│   │   └── ... (12 total)
-│   ├── tests/
-│   │   └── test_censorship.py       # ✨ NEW
-│   ├── CENSORSHIP_v2.md             # ✨ NEW DOCS
-│   ├── docker-compose.yml
-│   ├── requirements.txt
-│   └── .env.example
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── TabBar.jsx           # ✨ NEW
-│   │   │   └── ...
-│   │   ├── api/
-│   │   │   └── musicApi.js          # ✨ UPDATED
-│   │   ├── main.jsx                 # ✨ Telegram SDK
-│   │   └── index.css                # ✨ Mobile responsive
-│   ├── TELEGRAM_SETUP.md            # ✨ NEW DOCS
-│   └── package.json
-├── GITHUB_DEPLOY.md                 # ✨ NEW
-├── QUICK_DEPLOY.md                  # ✨ NEW
-├── PROJECT_STATUS.md                # ✨ NEW
-├── push-to-github.sh                # ✨ NEW
-└── README.md                        # ✨ UPDATED
-```
+### Быстрый доступ
+
+- **Фронтенд:** https://qweasdzxcqweasdzxcqweasdzx.github.io/music-app/
+- **Бэкенд API:** http://192.168.31.97:8000/api
+- **Swagger UI:** http://192.168.31.97:8000/docs
+- **Health Check:** http://192.168.31.97:8000/health
 
 ---
 
-## 🌐 GitHub Pages
+## 🔧 Управление сервером
 
-**Status:** ⏳ Ready to enable
+### Запуск сервера
 
-**Workflow:** `.github/workflows/deploy-frontend.yml`
-
-**Для включения:**
-1. Перейдите на https://github.com/qweasdzxcqweasdzxcqweasdzx/music-app/settings/pages
-2. Source: GitHub Actions
-3. Workflow автоматически запустится при пуше в `frontend/`
-
-**URL после деплоя:**
-```
-https://qweasdzxcqweasdzxcqweasdzx.github.io/music-app/
-```
-
----
-
-## 📱 Telegram Mini App
-
-**Status:** ⏳ Ready to configure
-
-**Шаги настройки:**
-1. Откройте @BotFather
-2. Отправьте `/newapp`
-3. Выберите бота
-4. Введите название и описание
-5. **URL:** `https://qweasdzxcqweasdzxcqweasdzx.github.io/music-app/`
-
-**Прямая ссылка:**
-```
-https://t.me/YOUR_BOT_USERNAME/app
-```
-
----
-
-## 🚀 Backend Deployment
-
-**Status:** ⏳ Ready to deploy
-
-**Команды для сервера:**
 ```bash
 cd /home/c1ten12/music-app/backend
-
-# 1. Настройка окружения
-cp .env.example .env
-nano .env
-
-# Заполните:
-# SOUNDCLOUD_CLIENT_ID=your_id
-# SOUNDCLOUD_CLIENT_SECRET=your_secret
-# SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
-
-# 2. Запуск через Docker
-docker-compose up -d
-
-# 3. Проверка
-docker-compose ps
-docker-compose logs -f backend
+source venv/bin/activate
+python -m uvicorn main_lite:app --host 0.0.0.0 --port 8000
 ```
 
-**Сервисы:**
-- MongoDB (порт 27017)
-- Redis (порт 6379)
-- Backend API (порт 8000)
-- Celery Worker
-- Flower (мониторинг, порт 5555)
-- Nginx (порты 80, 443)
+### Остановка сервера
+
+```bash
+pkill -f "uvicorn main_lite"
+```
+
+### Перезапуск сервера
+
+```bash
+pkill -f "uvicorn main_lite"
+sleep 1
+cd /home/c1ten12/music-app/backend
+source venv/bin/activate
+nohup python -m uvicorn main_lite:app --host 0.0.0.0 --port 8000 > /tmp/uvicorn.log 2>&1 &
+```
+
+### Проверка статуса
+
+```bash
+# Процесс
+ps aux | grep uvicorn
+
+# Порт
+ss -tlnp | grep 8000
+
+# Health
+curl http://192.168.31.97:8000/health
+```
+
+---
+
+## 📁 Файлы
+
+### Бэкенд
+
+```
+/home/c1ten12/music-app/backend/
+├── main_lite.py                    # Сервер (lite версия)
+├── routes_lite.py                  # API endpoints
+├── services/
+│   ├── blues_detection_service.py  # Anti-Censorship ядро
+│   └── youtube_service.py          # YouTube поиск
+├── DEPLOYMENT.md                   # Полная документация
+├── ANTI_CENSORSHIP.md              # Anti-Censorship docs
+└── QUICK_START.md                  # Быстрый старт
+```
+
+### Фронтенд
+
+```
+/home/c1ten12/music-app/frontend/
+├── src/api/musicApi.js             # API клиент (обновлён!)
+├── dist/                           # Сборка для деплоя
+├── SETUP_API.md                    # Настройка API
+└── DEPLOY.md                       # Деплой документация
+```
 
 ---
 
 ## 🧪 Тестирование
 
-### Backend Tests
-```bash
-cd backend
-pytest tests/test_censorship.py -v
+### Проверка API
 
-# Ожидается:
-# ✅ 20 tests passing
+```bash
+# Health check
+curl http://192.168.31.97:8000/health
+
+# Anti-Censorship тест
+curl http://192.168.31.97:8000/api/censorship/test
+
+# Поиск с explicit приоритетом
+curl "http://192.168.31.97:8000/api/censorship/search-uncensored?q=eminem&prefer_explicit=true"
 ```
 
-### Frontend Build
-```bash
-cd frontend
-npm install
-npm run build
+### Проверка фронтенда
 
-# Ожидается:
-# ✅ Build complete in dist/
+1. Откройте: https://qweasdzxcqweasdzxcqweasdzx.github.io/music-app/
+2. Откройте DevTools (F12)
+3. Проверьте Console на наличие ошибок
+4. Проверьте Network tab - запросы должны идти на `http://192.168.31.97:8000/api/...`
+
+---
+
+## 📡 API Endpoints
+
+### Anti-Censorship
+
+| Endpoint | Метод | Описание |
+|----------|-------|----------|
+| `/api/censorship/check` | GET | Проверка трека на цензуру |
+| `/api/censorship/find-original` | POST | Поиск оригинальной версии |
+| `/api/censorship/search-uncensored` | GET | Поиск с приоритетом explicit |
+| `/api/censorship/analyze-batch` | POST | Массовый анализ треков |
+| `/api/censorship/statistics` | GET | Статистика цензуры |
+| `/api/censorship/replace-censored` | POST | Замена в плейлистах |
+| `/api/censorship/test` | GET | Тест системы |
+
+### Примеры запросов
+
+```bash
+# Проверка трека
+curl "http://192.168.31.97:8000/api/censorship/check?track_id=test123"
+
+# Поиск оригинала
+curl -X POST "http://192.168.31.97:8000/api/censorship/find-original" \
+  -H "Content-Type: application/json" \
+  -d '{"track_id": "test123"}'
+
+# Поиск explicit версий
+curl "http://192.168.31.97:8000/api/censorship/search-uncensored?q=eminem&prefer_explicit=true"
 ```
 
 ---
 
-## 📈 Статистика проекта
+## 🔍 Troubleshooting
 
-| Metric | Value |
-|--------|-------|
-| **Total Files** | 73+ |
-| **Total Lines** | ~19,000 |
-| **Python Files** | 25 |
-| **JavaScript Files** | 45+ |
-| **Documentation** | 15+ files |
-| **Tests** | 20+ assertions |
-| **Commits** | 6 |
+### Сервер не работает
 
----
+```bash
+# Проверка логов
+cat /tmp/uvicorn.log
 
-## 🎯 Следующие шаги
+# Перезапуск
+pkill -f "uvicorn"
+cd /home/c1ten12/music-app/backend
+source venv/bin/activate
+nohup python -m uvicorn main_lite:app --host 0.0.0.0 --port 8000 > /tmp/uvicorn.log 2>&1 &
 
-### 1. ✅ Включить GitHub Pages
-- Settings → Pages
-- Source: GitHub Actions
-- Workflow запустится автоматически
+# Проверка
+curl http://localhost:8000/health
+```
 
-### 2. ✅ Настроить Telegram Mini App
-- @BotFather → /newapp
-- URL: `https://qweasdzxcqweasdzxcqweasdzx.github.io/music-app/`
+### Фронтенд не подключается
 
-### 3. ✅ Развернуть Backend
-- Настроить .env
-- Запустить docker-compose
+1. Проверьте API URL в `frontend/src/api/musicApi.js`
+2. Убедитесь, что сервер доступен: `curl http://192.168.31.97:8000/health`
+3. Проверьте CORS в `backend/main_lite.py`:
+   ```python
+   allow_origins=["*"]
+   ```
 
-### 4. ✅ Протестировать
-- Открыть приложение в Telegram
-- Проверить поиск треков
-- Проверить воспроизведение
-- Проверить анти-цензуру
+### Ошибки CORS в браузере
 
----
+**Решение:** В `backend/main_lite.py`:
 
-## 🔗 Ссылки
-
-- **GitHub Repository:** https://github.com/qweasdzxcqweasdzxcqweasdzx/music-app
-- **Issues:** https://github.com/qweasdzxcqweasdzxcqweasdzx/music-app/issues
-- **Actions:** https://github.com/qweasdzxcqweasdzxcqweasdzx/music-app/actions
+```python
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
 
 ---
 
-## 📝 Документация
+## 📝 История развёртывания
 
-- `README.md` - Основная документация
-- `QUICK_DEPLOY.md` - Быстрый старт
-- `GITHUB_DEPLOY.md` - Полная инструкция по деплою
-- `PROJECT_STATUS.md` - Статус проекта
-- `CENSORSHIP_v2.md` - Система анти-цензуры
-- `TELEGRAM_SETUP.md` - Настройка Telegram Mini App
+### 2026-03-08
 
----
-
-## ✅ Чеклист завершения
-
-- [x] Git репозиторий создан
-- [x] Все файлы закоммичены
-- [x] Пуш на GitHub выполнен
-- [x] GitHub Actions workflow добавлен
-- [x] Описание репозитория обновлено
-- [ ] GitHub Pages включён
-- [ ] Telegram Mini App настроен
-- [ ] Backend развёрнут
-- [ ] Тесты пройдены
+- ✅ Бэкенд развёрнут на сервере (192.168.31.97:8000)
+- ✅ Anti-Censorship система активирована
+- ✅ Фронтенд собран и задеплоен на GitHub Pages
+- ✅ API URL обновлён на серверный
+- ✅ Документация создана
 
 ---
 
-**🎉 Проект успешно размещён на GitHub!**
+## 📞 Поддержка
 
-**Version:** 3.0.0  
-**Status:** ✅ Production Ready  
-**License:** MIT
+### Логи
+
+- Бэкенд: `/tmp/uvicorn.log`
+- Systemd: `journalctl -u music-app` (если настроено)
+
+### Диагностика
+
+```bash
+# Полный чеклист
+echo "=== Python ===" && python3 --version
+echo "=== Uvicorn ===" && which uvicorn
+echo "=== yt-dlp ===" && yt-dlp --version
+echo "=== Port 8000 ===" && ss -tlnp | grep 8000
+echo "=== Health ===" && curl http://localhost:8000/health
+```
+
+---
+
+## ✅ Статус
+
+| Компонент | Статус | URL |
+|-----------|--------|-----|
+| **Бэкенд** | ✅ Работает | http://192.168.31.97:8000 |
+| **Фронтенд** | ✅ Задеплоено | https://qweasdzxcqweasdzxcqweasdzx.github.io/music-app/ |
+| **Swagger** | ✅ Доступен | http://192.168.31.97:8000/docs |
+| **Anti-Censorship** | ✅ Включено | /api/censorship/* |
+
+---
+
+**🎉 Всё работает!**

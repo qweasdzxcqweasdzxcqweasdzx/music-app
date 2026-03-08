@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import asyncio
+from typing import Optional
 
 from config import settings
 from database import connect_to_mongodb, close_mongodb_connection

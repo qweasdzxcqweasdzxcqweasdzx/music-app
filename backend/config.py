@@ -69,6 +69,11 @@ class Settings(BaseSettings):
     # Replicate
     REPLICATE_API_TOKEN: Optional[str] = None
 
+    # Spotify (опционально)
+    SPOTIFY_CLIENT_ID: Optional[str] = None
+    SPOTIFY_CLIENT_SECRET: Optional[str] = None
+    SPOTIFY_REDIRECT_URI: Optional[str] = None
+
     # Прокси
     PROXY_URL: Optional[str] = None
 
@@ -100,6 +105,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "ignore"  # Игнорировать лишние переменные из .env
 
 
 settings = Settings()

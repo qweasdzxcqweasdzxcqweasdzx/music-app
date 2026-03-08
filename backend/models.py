@@ -43,6 +43,8 @@ class Track(BaseModel):
     genres: List[str] = []
     release_date: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    description: Optional[str] = None
+    version_type: Optional[str] = None  # explicit, clean, unknown
 
     class Config:
         populate_by_name = True

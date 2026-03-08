@@ -1252,3 +1252,309 @@ async def get_task_status(task_id: str):
         "status": task.status,
         "result": task.result if task.ready() else None
     }
+
+
+# ==================== Anti-Censorship / Blues Detection ====================
+
+@router.get("/censorship/check")
+async def check_track_censorship(
+    track_id: str,
+    source: str = "soundcloud"
+):
+    """
+    Проверка трека на цензуру
+
+    Args:
+        track_id: ID трека
+        source: Источник (soundcloud, youtube, vk, navidrome)
+
+    Returns:
+        Информация о цензуре
+    """
+    from services.blues_detection_service import blues_detection_service
+    from services.soundcloud_service import soundcloud_service
+    from services.youtube_service import YouTubeMusicService
+
+    # Получение трека
+    track = None
+    if source == "soundcloud":
+        track = await soundcloud_service.get_track(track_id)
+    elif source == "youtube":
+        yt_service = YouTubeMusicService()
+        track = await yt_service.get_track_by_query(track_id)
+
+    if not track:
+        raise HTTPException(status_code=404, detail="Track not found")
+
+    # Анализ
+    is_censored = blues_detection_service.is_censored(track)
+    is_explicit = blues_detection_service.is_explicit_version(track)
+    version_type = blues_detection_service.get_version_type(track)
+
+    return {
+        "track_id": track_id,
+        "title": track.title,
+        "artist": track.artist,
+        "is_censored": is_censored,
+        "is_explicit": is_explicit,
+        "version_type": version_type,
+        "confidence": 0.85 if is_censored or is_explicit else 0.5
+    }
+
+
+@router.post("/censorship/find-original")
+async def find_original_version(
+    track_id: str,
+    source: str = "soundcloud",
+    platforms: Optional[List[str]] = None
+):
+    """
+    Поиск оригинальной (нецензурированной) версии трека
+
+    Args:
+        track_id: ID цензурированного трека
+        source: Источник оригинального трека
+        platforms: Платформы для поиска (youtube, soundcloud, vk, navidrome)
+
+    Returns:
+        Найденная оригинальная версия
+    """
+    from services.blues_detection_service import blues_detection_service
+    from services.soundcloud_service import soundcloud_service
+    from services.youtube_service import YouTubeMusicService
+
+    # Получение исходного трека
+    censored_track = None
+    if source == "soundcloud":
+        censored_track = await soundcloud_service.get_track(track_id)
+    elif source == "youtube":
+        yt_service = YouTubeMusicService()
+        censored_track = await yt_service.get_track_by_query(track_id)
+
+    if not censored_track:
+        raise HTTPException(status_code=404, detail="Track not found")
+
+    # Проверка - может это уже оригинал
+    if blues_detection_service.is_explicit_version(censored_track):
+        return {
+            "status": "already_explicit",
+            "message": "Это уже оригинальная версия",
+            "track": censored_track
+        }
+
+    # Поиск оригинала
+    original = await blues_detection_service.find_original_version(
+        censored_track,
+        min_similarity=0.6
+    )
+
+    if not original:
+        return {
+            "status": "not_found",
+            "message": "Оригинальная версия не найдена",
+            "searched_platforms": platforms or blues_detection_service.SEARCH_SERVICES
+        }
+
+    return {
+        "status": "found",
+        "original_track": original,
+        "censored_track": censored_track,
+        "similarity": blues_detection_service.similarity_ratio(
+            censored_track.title,
+            original.title
+        )
+    }
+
+
+@router.get("/censorship/search-uncensored")
+async def search_uncensored_tracks(
+    q: str,
+    artist: Optional[str] = None,
+    prefer_explicit: bool = True,
+    limit: int = 20
+):
+    """
+    Поиск треков с приоритетом нецензурированных версий
+
+    Args:
+        q: Поисковый запрос
+        artist: Имя артиста
+        prefer_explicit: Приоритет explicit версий
+        limit: Количество результатов
+
+    Returns:
+        Список треков с флагами цензуры
+    """
+    from services.blues_detection_service import blues_detection_service
+    from services.youtube_service import YouTubeMusicService
+    from services.soundcloud_service import soundcloud_service
+
+    query = f"{artist} {q}".strip() if artist else q
+
+    # Поиск на YouTube с приоритетом explicit
+    yt_service = YouTubeMusicService()  # proxy убран для упрощения
+    yt_tracks = await yt_service.search(query, limit=limit, prefer_explicit=prefer_explicit)
+
+    # Поиск на SoundCloud
+    sc_results = await soundcloud_service.search(query, limit=limit)
+    sc_tracks = sc_results.get('tracks', [])
+
+    # Объединение и маркировка
+    all_tracks = yt_tracks + sc_tracks
+
+    # Добавление информации о цензуре
+    tracks_with_censorship = []
+    for track in all_tracks:
+        tracks_with_censorship.append({
+            "track": track,
+            "is_censored": blues_detection_service.is_censored(track),
+            "is_explicit": blues_detection_service.is_explicit_version(track),
+            "version_type": blues_detection_service.get_version_type(track)
+        })
+
+    # Сортировка: сначала explicit, потом остальные
+    tracks_with_censorship.sort(
+        key=lambda x: (not x["is_explicit"], x["is_censored"])
+    )
+
+    return {
+        "tracks": tracks_with_censorship[:limit],
+        "total": len(tracks_with_censorship),
+        "explicit_count": sum(1 for t in tracks_with_censorship if t["is_explicit"]),
+        "censored_count": sum(1 for t in tracks_with_censorship if t["is_censored"])
+    }
+
+
+@router.post("/censorship/analyze-batch")
+async def analyze_batch_tracks(
+    track_ids: List[str],
+    source: str = "soundcloud"
+):
+    """
+    Массовый анализ треков на цензуру
+
+    Args:
+        track_ids: Список ID треков
+        source: Источник треков
+
+    Returns:
+        Отчет по цензуре
+    """
+    from services.blues_detection_service import blues_detection_service
+    from services.soundcloud_service import soundcloud_service
+
+    tracks = []
+    for track_id in track_ids[:50]:  # Ограничение
+        track = await soundcloud_service.get_track(track_id)
+        if track:
+            tracks.append(track)
+
+    report = blues_detection_service.get_censorship_report(tracks)
+
+    # Детальная информация по каждому треку
+    track_details = []
+    for track in tracks:
+        track_details.append({
+            "id": track.id,
+            "title": track.title,
+            "artist": track.artist,
+            "is_censored": blues_detection_service.is_censored(track),
+            "is_explicit": blues_detection_service.is_explicit_version(track),
+            "version_type": blues_detection_service.get_version_type(track)
+        })
+
+    return {
+        "summary": report,
+        "tracks": track_details
+    }
+
+
+@router.get("/censorship/statistics")
+async def get_censorship_statistics():
+    """
+    Статистика цензуры по доступным трекам
+
+    Returns:
+        Общая статистика
+    """
+    from services.blues_detection_service import blues_detection_service
+    from services.soundcloud_service import soundcloud_service
+
+    # Получение популярных треков для анализа
+    trending = await soundcloud_service.get_trending(limit=50)
+    new_hot = await soundcloud_service.get_new_hot(limit=50)
+
+    all_tracks = trending + new_hot
+
+    report = blues_detection_service.get_censorship_report(all_tracks)
+
+    return {
+        "statistics": report,
+        "analyzed_count": len(all_tracks),
+        "recommendation": "Используйте /censorship/find-original для поиска оригинальных версий"
+    }
+
+
+@router.post("/censorship/replace-censored")
+async def replace_censored_in_playlist(
+    track_ids: List[str],
+    source: str = "soundcloud"
+):
+    """
+    Замена цензурированных треков на оригинальные в плейлисте
+
+    Args:
+        track_ids: Список ID треков в плейлисте
+        source: Источник треков
+
+    Returns:
+        Список замен
+    """
+    from services.blues_detection_service import blues_detection_service
+    from services.soundcloud_service import soundcloud_service
+    from services.youtube_service import YouTubeMusicService
+
+    replacements = []
+    yt_service = YouTubeMusicService()  # proxy убран для упрощения
+
+    for track_id in track_ids[:20]:  # Ограничение
+        track = await soundcloud_service.get_track(track_id)
+        if not track:
+            continue
+
+        # Проверка на цензуру
+        if blues_detection_service.is_censored(track):
+            # Поиск оригинала
+            original = await blues_detection_service.find_original_version(track)
+
+            if original:
+                replacements.append({
+                    "original_id": track_id,
+                    "replacement": {
+                        "id": original.id,
+                        "title": original.title,
+                        "artist": original.artist,
+                        "source": original.source
+                    },
+                    "reason": "censored_version"
+                })
+            else:
+                # Поиск на YouTube
+                yt_original = await yt_service.find_uncensored_version(track)
+                if yt_original:
+                    replacements.append({
+                        "original_id": track_id,
+                        "replacement": {
+                            "id": yt_original.id,
+                            "title": yt_original.title,
+                            "artist": yt_original.artist,
+                            "source": "youtube"
+                        },
+                        "reason": "censored_version_youtube"
+                    })
+
+    return {
+        "replacements": replacements,
+        "total_replacements": len(replacements),
+        "processed": len(track_ids[:20])
+    }

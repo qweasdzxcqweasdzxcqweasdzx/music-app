@@ -1,0 +1,81 @@
+# ===========================================
+# Global .gitignore for Ultimate Music App
+# ===========================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+.venv
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads and cache
+uploads/
+cache/
+downloads/
+
+# Build artifacts
+build/
+dist/
+
+# SSL certificates
+ssl/
+*.crt
+*.pem
+*.key
+
+# Temporary files
+tmp/
+temp/
+
+# Test coverage
+.coverage
+htmlcov/
+.tox/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json

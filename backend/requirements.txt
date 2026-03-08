@@ -1,0 +1,50 @@
+# Core
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+websockets==12.0
+
+# Database
+pymongo==4.6.1
+motor==3.3.2
+
+# Redis
+redis==5.0.1
+aioredis==2.0.1
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Telegram Bot
+python-telegram-bot==20.7
+
+# HTTP Client
+aiohttp==3.9.1
+httpx==0.26.0
+
+# Settings
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# Task Queue (Celery)
+celery==5.3.6
+flower==2.0.1
+
+# Rate Limiting
+slowapi==0.1.9
+
+# Encryption (for token storage)
+cryptography==42.0.0
+
+# YouTube
+yt-dlp==2024.1.26
+
+# Audio Processing
+pydub==0.25.1
+
+# WebSocket Client
+websocket-client==1.7.0
+
+# Utils
+python-dateutil==2.8.2

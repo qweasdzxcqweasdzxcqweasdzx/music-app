@@ -1,0 +1,155 @@
+version: '3.8'
+
+services:
+  # MongoDB - база данных
+  mongo:
+    image: mongo:7
+    container_name: music_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: ultimate_music_app
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - music_network
+
+  # Redis - кэширование и очереди задач
+  redis:
+    image: redis:7-alpine
+    container_name: music_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - music_network
+    command: redis-server --appendonly yes
+
+  # Celery Worker - для фоновых задач (AI генерация, обработка)
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: music_celery_worker
+    restart: unless-stopped
+    command: celery -A celery_worker.celery_app worker --loglevel=info
+    environment:
+      - MONGODB_URL=mongodb://admin:admin123@mongo:27017/ultimate_music_app?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      - SUNO_API_KEY=${SUNO_API_KEY}
+      - MUBERT_TOKEN=${MUBERT_TOKEN}
+      - LALAL_API_KEY=${LALAL_API_KEY}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
+      - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
+    volumes:
+      - ./downloads:/app/downloads
+      - ./static:/app/static
+    depends_on:
+      - redis
+    networks:
+      - music_network
+
+  # Celery Beat - для периодических задач
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: music_celery_beat
+    restart: unless-stopped
+    command: celery -A celery_worker.celery_app beat --loglevel=info
+    environment:
+      - MONGODB_URL=mongodb://admin:admin123@mongo:27017/ultimate_music_app?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - music_network
+
+  # Flower - мониторинг Celery (опционально)
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: music_flower
+    restart: unless-stopped
+    command: celery -A celery_worker.celery_app flower --port=5555
+    ports:
+      - "5555:5555"
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+    depends_on:
+      - redis
+    networks:
+      - music_network
+
+  # Backend - FastAPI сервер
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: music_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URL=mongodb://admin:admin123@mongo:27017/ultimate_music_app?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - SOUNDCLOUD_CLIENT_ID=${SOUNDCLOUD_CLIENT_ID}
+      - SOUNDCLOUD_CLIENT_SECRET=${SOUNDCLOUD_CLIENT_SECRET}
+      - VK_CLIENT_ID=${VK_CLIENT_ID}
+      - VK_CLIENT_SECRET=${VK_CLIENT_SECRET}
+      - NAVIDROME_URL=${NAVIDROME_URL}
+      - NAVIDROME_USERNAME=${NAVIDROME_USERNAME}
+      - NAVIDROME_PASSWORD=${NAVIDROME_PASSWORD}
+      - SUNO_API_KEY=${SUNO_API_KEY}
+      - MUBERT_TOKEN=${MUBERT_TOKEN}
+      - LALAL_API_KEY=${LALAL_API_KEY}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
+      - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
+      - SECRET_KEY=${SECRET_KEY:-super-secret-key-change-in-production-min-32-chars}
+    volumes:
+      - ./static:/app/static
+      - ./downloads:/app/downloads
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - music_network
+
+  # Nginx - reverse proxy (опционально)
+  nginx:
+    image: nginx:alpine
+    container_name: music_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./static:/usr/share/nginx/html:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+    networks:
+      - music_network
+
+volumes:
+  mongo_data:
+  redis_data:
+
+networks:
+  music_network:
+    driver: bridge

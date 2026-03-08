@@ -14,6 +14,29 @@ class MusicAPI {
     this.initTelegramAuth();
   }
 
+  // ==================== AUDIO STREAMING ====================
+  
+  /**
+   * Получить URL для воспроизведения трека
+   */
+  async getAudioStreamUrl(videoId) {
+    // Используем прокси для обхода CORS
+    return `${API_URL.replace('/api', '')}/audio/proxy/${videoId}`;
+  }
+
+  /**
+   * Воспроизвести трек
+   */
+  async playTrack(videoId, title, artist) {
+    const streamUrl = await this.getAudioStreamUrl(videoId);
+    return {
+      url: streamUrl,
+      title: title,
+      artist: artist,
+      videoId: videoId
+    };
+  }
+
   // Инициализация аутентификации Telegram
   async initTelegramAuth() {
     if (window.Telegram?.WebApp) {

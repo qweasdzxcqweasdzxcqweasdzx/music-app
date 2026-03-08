@@ -1,0 +1,230 @@
+.album {
+  padding: 0 16px;
+  padding-bottom: 140px;
+}
+
+.loading,
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #1db954;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error button {
+  padding: 12px 24px;
+  background: #1db954;
+  border: none;
+  border-radius: 24px;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Header */
+.header {
+  position: relative;
+  margin: -16px -16px 24px;
+  padding: 16px;
+  background: linear-gradient(180deg, #1db954 0%, #121212 100%);
+}
+
+.backButton {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.cover {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.coverPlaceholder {
+  width: 180px;
+  height: 180px;
+  background: linear-gradient(135deg, #333, #1a1a1a);
+}
+
+.info {
+  flex: 1;
+}
+
+.type {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.name {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 8px 0;
+  color: #fff;
+}
+
+.artists {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+}
+
+.meta {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.playButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: #1db954;
+  border: none;
+  border-radius: 30px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.playButton:hover:not(:disabled) {
+  transform: scale(1.05);
+  background: #1ed760;
+}
+
+.playButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Треклист */
+.tracklist {
+  display: flex;
+  flex-direction: column;
+}
+
+.trackRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.trackRow:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.trackRow.current {
+  background: rgba(29, 185, 84, 0.2);
+}
+
+.trackNumber {
+  width: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.trackInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trackTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.trackArtist {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.trackDuration {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Equalizer animation */
+.equalizer {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  height: 16px;
+}
+
+.bar {
+  width: 3px;
+  background: #1db954;
+  animation: equalizer 0.5s ease-in-out infinite;
+}
+
+.bar:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.bar:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.bar:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+@keyframes equalizer {
+  0%, 100% {
+    height: 4px;
+  }
+  50% {
+    height: 16px;
+  }
+}
+
+.spacer {
+  height: 100px;
+}

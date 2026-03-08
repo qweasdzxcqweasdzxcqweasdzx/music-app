@@ -1,0 +1,50 @@
+.page {
+  min-height: 100%;
+  opacity: 0;
+  animation: pageFadeIn 300ms ease forwards;
+}
+
+.animating {
+  pointer-events: none;
+}
+
+.visible {
+  opacity: 1;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger animation for child elements */
+.page > * {
+  animation: childFadeIn 400ms ease forwards;
+  opacity: 0;
+}
+
+.page > *:nth-child(1) { animation-delay: 50ms; }
+.page > *:nth-child(2) { animation-delay: 100ms; }
+.page > *:nth-child(3) { animation-delay: 150ms; }
+.page > *:nth-child(4) { animation-delay: 200ms; }
+.page > *:nth-child(5) { animation-delay: 250ms; }
+.page > *:nth-child(6) { animation-delay: 300ms; }
+.page > *:nth-child(7) { animation-delay: 350ms; }
+.page > *:nth-child(8) { animation-delay: 400ms; }
+
+@keyframes childFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

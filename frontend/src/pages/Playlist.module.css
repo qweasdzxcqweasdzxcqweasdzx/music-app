@@ -1,0 +1,419 @@
+.playlist {
+  min-height: 100%;
+  background: var(--bg-primary);
+  padding-bottom: 160px;
+}
+
+.header {
+  background: linear-gradient(180deg, var(--gradient-top) 0%, var(--bg-primary) 100%);
+  padding: 16px;
+  padding-bottom: 24px;
+  position: relative;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.backBtn {
+  width: 32px;
+  height: 32px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+}
+
+.topRow {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+}
+
+.cover {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.type {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.name {
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 8px 0;
+  line-height: 1.1;
+}
+
+.description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.owner {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.separator {
+  opacity: 0.6;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.playBtn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-md);
+}
+
+.playBtn:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: scale(1.05);
+}
+
+.playBtn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.playBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.iconBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.iconBtn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menu {
+  position: absolute;
+  top: 100%;
+  right: 16px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  padding: 8px 0;
+  box-shadow: var(--shadow-lg);
+  z-index: 10;
+  min-width: 200px;
+}
+
+.menuItem {
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: transparent;
+  transition: background var(--transition-fast);
+}
+
+.menuItem:hover {
+  background: var(--bg-highlight);
+}
+
+.menuItemDanger {
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 14px;
+  color: var(--error);
+  background: transparent;
+  transition: background var(--transition-fast);
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  padding-top: 12px;
+}
+
+.menuItemDanger:hover {
+  background: rgba(233, 20, 41, 0.1);
+}
+
+.tracksHeader {
+  display: grid;
+  grid-template-columns: 40px 1fr 60px;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.trackList {
+  padding: 0 16px;
+}
+
+.trackRow {
+  display: grid;
+  grid-template-columns: 40px 1fr 60px;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.trackRow:hover {
+  background: var(--bg-highlight);
+}
+
+.trackNumber {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.trackCardWrapper {
+  min-width: 0;
+}
+
+.deleteBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all var(--transition-fast);
+}
+
+.trackRow:hover .deleteBtn {
+  opacity: 1;
+}
+
+.deleteBtn:hover {
+  color: var(--error);
+  background: rgba(233, 20, 41, 0.1);
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 16px;
+  color: var(--text-secondary);
+}
+
+.empty p {
+  margin-bottom: 16px;
+}
+
+.addBtn {
+  padding: 12px 24px;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: transform var(--transition-fast);
+}
+
+.addBtn:hover {
+  transform: scale(1.05);
+}
+
+/* Edit mode */
+.editMode {
+  min-height: 100%;
+  background: var(--bg-primary);
+}
+
+.editHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.editTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.saveBtn {
+  padding: 8px 24px;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: transform var(--transition-fast);
+}
+
+.saveBtn:hover {
+  transform: scale(1.05);
+}
+
+.editForm {
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.coverEdit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.coverEditImg {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.changeCoverBtn {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 20px;
+  font-size: 13px;
+  transition: all var(--transition-fast);
+}
+
+.changeCoverBtn:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.nameInput, .descInput {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.nameInput:focus, .descInput:focus {
+  border-color: var(--text-secondary);
+}
+
+.descInput {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.publicToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.publicToggle input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+
+.spacer {
+  height: 100px;
+}
+
+@media (max-width: 480px) {
+  .topRow {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .cover {
+    width: 160px;
+    height: 160px;
+  }
+
+  .name {
+    font-size: 28px;
+  }
+
+  .meta {
+    justify-content: center;
+  }
+
+  .actions {
+    justify-content: center;
+  }
+
+  .tracksHeader {
+    display: none;
+  }
+
+  .trackRow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .trackNumber, .deleteBtn {
+    display: none;
+  }
+}

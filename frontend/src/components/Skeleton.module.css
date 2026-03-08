@@ -1,0 +1,147 @@
+/* Skeleton loaders в стиле Spotify */
+
+/* Track Skeleton */
+.trackSkeleton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.coverSkeleton,
+.artistImageSkeleton,
+.albumCoverSkeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.coverSkeleton {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.artistImageSkeleton {
+  width: 100%;
+  padding-top: 100%;
+  border-radius: 50%;
+}
+
+.albumCoverSkeleton {
+  width: 100%;
+  padding-top: 100%;
+  border-radius: 4px;
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.titleSkeleton,
+.artistSkeleton,
+.artistNameSkeleton,
+.albumTitleSkeleton,
+.albumArtistSkeleton,
+.durationSkeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.titleSkeleton {
+  height: 16px;
+  width: 70%;
+}
+
+.artistSkeleton,
+.albumArtistSkeleton {
+  height: 14px;
+  width: 50%;
+}
+
+.artistNameSkeleton {
+  height: 16px;
+  width: 80%;
+  margin-top: 8px;
+}
+
+.albumTitleSkeleton {
+  height: 16px;
+  width: 90%;
+  margin-top: 8px;
+}
+
+.durationSkeleton {
+  height: 14px;
+  width: 40px;
+}
+
+/* Artist Card Skeleton */
+.artistCardSkeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  min-width: 150px;
+}
+
+/* Album Card Skeleton */
+.albumCardSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  min-width: 150px;
+}
+
+/* Section Skeleton */
+.sectionSkeleton {
+  margin-bottom: 24px;
+}
+
+.sectionTitleSkeleton {
+  height: 24px;
+  width: 30%;
+  margin-bottom: 16px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.sectionContentSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

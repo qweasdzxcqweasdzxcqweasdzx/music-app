@@ -3,7 +3,8 @@
  * SoundCloud API + Telegram Mini Apps
  */
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+// Обновлённый URL для подключения к серверу
+const API_URL = import.meta.env.VITE_API_URL || 'http://192.168.31.97:8000/api';
 
 class MusicAPI {
   constructor() {

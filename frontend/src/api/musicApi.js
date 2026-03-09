@@ -4,7 +4,7 @@
  */
 
 // HTTPS URL через Cloudflare Tunnel + CORS Proxy (порт 8081)
-const API_URL = 'https://builders-arena-borders-purchased.trycloudflare.com/api';
+const API_URL = 'https://tune-car-stockholm-went.trycloudflare.com/api';
 
 class MusicAPI {
   constructor() {

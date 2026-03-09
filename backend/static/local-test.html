@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music App - Local Test</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #121212;
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { margin-bottom: 20px; color: #1DB954; }
+        
+        .status-bar {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #666;
+        }
+        .status-dot.active { background: #1DB954; }
+        .status-dot.error { background: #e74c3c; }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 25px;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 16px;
+        }
+        .search-input:focus {
+            outline: 2px solid #1DB954;
+        }
+        .search-btn {
+            padding: 12px 24px;
+            background: #1DB954;
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .search-btn:hover { background: #1ed760; }
+        
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .track-card {
+            background: #1e1e1e;
+            padding: 16px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .track-card:hover {
+            transform: translateY(-4px);
+            background: #2a2a2a;
+        }
+        .track-cover {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #333;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            object-fit: cover;
+        }
+        .track-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .track-artist {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .track-meta {
+            display: flex;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .tag {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        .tag-explicit { background: #444; color: #fff; }
+        .tag-censored { background: #e74c3c; color: #fff; }
+        .tag-clean { background: #1DB954; color: #000; }
+        .tag-source { background: #3498db; color: #fff; }
+        
+        .play-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+            background: #1DB954;
+            border: none;
+            border-radius: 20px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .play-btn:hover { background: #1ed760; }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error-msg {
+            background: #e74c3c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        audio {
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .api-info {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .api-info code {
+            background: #2a2a2a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Music App - Local Test</h1>
+        
+        <div class="api-info">
+            <strong>📡 API Endpoints:</strong><br>
+            Backend: <code id="backend-url">http://localhost:8000</code><br>
+            CORS Proxy: <code id="cors-url">http://localhost:8081</code><br>
+            Swagger: <a href="http://localhost:8000/docs" target="_blank" style="color: #1DB954;">http://localhost:8000/docs</a>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="backend-status"></div>
+                <span>Бэкенд</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot" id="cors-status"></div>
+                <span>CORS Proxy</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot" id="soundcloud-status"></div>
+                <span>SoundCloud</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot" id="youtube-status"></div>
+                <span>YouTube</span>
+            </div>
+        </div>
+        
+        <div id="error-container"></div>
+        
+        <div class="search-box">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="search-input"
+                placeholder="Поиск треков (например: Eminem, Billie Eilish)..."
+                onkeypress="if(event.key==='Enter') searchMusic()"
+            >
+            <button class="search-btn" onclick="searchMusic()">🔍 Поиск</button>
+        </div>
+        
+        <div id="player-container"></div>
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8081/api';
+        
+        // Проверка статуса при загрузке
+        window.addEventListener('DOMContentLoaded', async () => {
+            await checkStatus();
+        });
+        
+        async function checkStatus() {
+            // Проверка бэкенда
+            try {
+                const resp = await fetch('http://localhost:8000/health');
+                const data = await resp.json();
+                document.getElementById('backend-status').className = 'status-dot active';
+                
+                document.getElementById('soundcloud-status').className = 
+                    'status-dot ' + (data.soundcloud === 'configured' ? 'active' : 'error');
+                document.getElementById('youtube-status').className = 
+                    'status-dot ' + (data.youtube === 'available' ? 'active' : 'error');
+            } catch (e) {
+                document.getElementById('backend-status').className = 'status-dot error';
+                showError('Бэкенд не доступен: ' + e.message);
+            }
+            
+            // Проверка CORS proxy
+            try {
+                const resp = await fetch(`${API_URL}/censorship/test`);
+                const data = await resp.json();
+                if (data.status === 'ok') {
+                    document.getElementById('cors-status').className = 'status-dot active';
+                } else {
+                    document.getElementById('cors-status').className = 'status-dot error';
+                }
+            } catch (e) {
+                document.getElementById('cors-status').className = 'status-dot error';
+                showError('CORS Proxy не доступен: ' + e.message);
+            }
+        }
+        
+        function showError(msg) {
+            document.getElementById('error-container').innerHTML = 
+                `<div class="error-msg">⚠️ ${msg}</div>`;
+        }
+        
+        async function searchMusic() {
+            const query = document.getElementById('search-input').value.trim();
+            if (!query) return;
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="loading">🔍 Поиск...</div>';
+            
+            try {
+                const resp = await fetch(
+                    `${API_URL}/censorship/search-uncensored?q=${encodeURIComponent(query)}&limit=20&prefer_explicit=true`
+                );
+                const data = await resp.json();
+                
+                if (!data.tracks || data.tracks.length === 0) {
+                    resultsDiv.innerHTML = '<div class="loading">Ничего не найдено</div>';
+                    return;
+                }
+                
+                resultsDiv.innerHTML = data.tracks.map((item, index) => {
+                    const track = item.track;
+                    const tags = [];
+                    
+                    if (item.is_explicit) tags.push('<span class="tag tag-explicit">Explicit</span>');
+                    if (item.is_censored) tags.push('<span class="tag tag-censored">Censored</span>');
+                    if (!item.is_explicit && !item.is_censored) tags.push('<span class="tag tag-clean">Clean</span>');
+                    tags.push(`<span class="tag tag-source">${track.source}</span>`);
+                    
+                    return `
+                        <div class="track-card">
+                            <img class="track-cover" src="${track.cover || 'https://picsum.photos/seed/${track.id}/300/300'}" alt="${track.title}">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">${track.artist}</div>
+                            <div class="track-meta">${tags.join(' ')}</div>
+                            <button class="play-btn" onclick="playTrack('${track.id}', '${track.source}', '${track.title.replace(/'/g, "\\'")}', '${track.artist.replace(/'/g, "\\'")}')">
+                                ▶️ Воспроизвести
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (e) {
+                resultsDiv.innerHTML = `<div class="error-msg">Ошибка поиска: ${e.message}</div>`;
+            }
+        }
+        
+        async function playTrack(trackId, source, title, artist) {
+            const playerContainer = document.getElementById('player-container');
+            
+            try {
+                // Для YouTube используем прямой стрим
+                if (source === 'youtube') {
+                    const videoId = trackId.replace('youtube_', '');
+                    const resp = await fetch(`${API_URL}/audio/stream/${videoId}`);
+                    const data = await resp.json();
+                    
+                    if (data.stream_url) {
+                        playerContainer.innerHTML = `
+                            <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                <div style="margin-bottom: 10px;">
+                                    <strong>🎵 Сейчас играет:</strong> ${title} - ${artist}
+                                </div>
+                                <audio controls autoplay>
+                                    <source src="${data.stream_url}" type="audio/mpeg">
+                                    Ваш браузер не поддерживает аудио
+                                </audio>
+                            </div>
+                        `;
+                    } else {
+                        alert('Не удалось получить аудио поток');
+                    }
+                } else {
+                    // SoundCloud
+                    playerContainer.innerHTML = `
+                        <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                            <div style="margin-bottom: 10px;">
+                                <strong>🎵 Сейчас играет:</strong> ${title} - ${artist}
+                            </div>
+                            <div style="color: #aaa;">
+                                SoundCloud треки требуют дополнительной обработки URL
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                alert('Ошибка воспроизведения: ' + e.message);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -3,8 +3,8 @@
  * SoundCloud API + Telegram Mini Apps
  */
 
-// HTTPS URL через Cloudflare Tunnel + CORS Proxy
-const API_URL = 'https://sanyo-testimonials-fleece-cognitive.trycloudflare.com:8080/api';
+// HTTPS URL через Cloudflare Tunnel + CORS Proxy (порт 8081)
+const API_URL = 'https://sanyo-testimonials-fleece-cognitive.trycloudflare.com:8081/api';
 
 class MusicAPI {
   constructor() {

@@ -12,6 +12,8 @@ from typing import Optional
 
 from config import settings
 from routes_lite import router  # Упрощенные роуты без MongoDB
+from routes_subsonic import router as subsonic_router  # Subsonic API совместимость
+from routes_api_keys import router as api_keys_router  # API-ключи
 from services.cache_service import cache_service
 
 from fastapi.staticfiles import StaticFiles
@@ -75,6 +77,8 @@ if os.path.exists(static_path):
 
 # Роуты
 app.include_router(router)
+app.include_router(subsonic_router)  # Subsonic API совместимость
+app.include_router(api_keys_router)  # API-ключи
 
 
 @app.get("/")
@@ -90,16 +94,34 @@ async def root():
             "YouTube via yt-dlp",
             "SoundCloud API",
             "Fuzzy Matching",
-            "Multi-platform Search"
+            "Multi-platform Search",
+            "Subsonic API Compatible ✓",
+            "API Keys Authentication ✓"
         ],
         "api_docs": "/docs",
+        "api_endpoints": {
+            "main": "/api/*",
+            "subsonic": "/rest/*",
+            "api_keys": "/api/keys"
+        },
         "new_endpoints": [
             "/api/censorship/check",
             "/api/censorship/find-original",
             "/api/censorship/search-uncensored",
             "/api/censorship/analyze-batch",
             "/api/censorship/statistics",
-            "/api/censorship/replace-censored"
+            "/api/censorship/replace-censored",
+            "/api/keys",
+            "/api/keys/test",
+            "/rest/ping.view",
+            "/rest/getArtists.view",
+            "/rest/getAlbumList.view"
+        ],
+        "subsonic_clients": [
+            "DSub (Android)",
+            "Substreamer (iOS)",
+            "Sonos",
+            "Kodi"
         ]
     }
 

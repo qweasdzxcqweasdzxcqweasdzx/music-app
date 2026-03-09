@@ -4,7 +4,7 @@
  */
 
 // HTTPS URL через Cloudflare Tunnel + CORS Proxy (порт 8081)
-const API_URL = 'https://sanyo-testimonials-fleece-cognitive.trycloudflare.com:8081/api';
+const API_URL = 'https://pdt-today-midnight-limitation.trycloudflare.com/api';
 
 class MusicAPI {
   constructor() {

@@ -46,7 +46,7 @@ const Search = () => {
     const timer = setTimeout(() => {
       if (query.trim()) {
         setIsSearching(true);
-        fetch(`https://sanyo-testimonials-fleece-cognitive.trycloudflare.com/api/search?q=${encodeURIComponent(query)}`)
+        fetch(`https://sanyo-testimonials-fleece-cognitive.trycloudflare.com:8080/api/search?q=${encodeURIComponent(query)}`)
           .then(res => res.json())
           .then(data => {
             setSearchResults(data);

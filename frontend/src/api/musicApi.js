@@ -4,7 +4,7 @@
  */
 
 // HTTPS URL через Cloudflare Tunnel + CORS Proxy (порт 8081)
-const API_URL = 'https://maker-became-reflected-shots.trycloudflare.com/api';
+const API_URL = 'https://put-darwin-configurations-comm.trycloudflare.com/api';
 
 class MusicAPI {
   constructor() {

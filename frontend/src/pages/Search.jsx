@@ -46,7 +46,7 @@ const Search = () => {
     const timer = setTimeout(() => {
       if (query.trim()) {
         setIsSearching(true);
-        fetch(`https://hunter-optimum-adrian-nat.trycloudflare.com/api/search?q=${encodeURIComponent(query)}`)
+        fetch(`https://mariah-iowa-predict-intake.trycloudflare.com/api/search?q=${encodeURIComponent(query)}`)
           .then(res => res.json())
           .then(data => {
             setSearchResults(data);

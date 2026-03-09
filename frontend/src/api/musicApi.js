@@ -4,7 +4,7 @@
  */
 
 // HTTPS URL через Cloudflare Tunnel + CORS Proxy (порт 8081)
-const API_URL = 'https://hunter-optimum-adrian-nat.trycloudflare.com/api';
+const API_URL = 'https://mariah-iowa-predict-intake.trycloudflare.com/api';
 
 class MusicAPI {
   constructor() {

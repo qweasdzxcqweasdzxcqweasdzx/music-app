@@ -4,7 +4,7 @@ API Routes - Lite Version (Anti-Censorship endpoints)
 Работает без MongoDB
 """
 
-from fastapi import APIRouter, HTTPException, Query, Request, Response
+from fastapi import APIRouter, HTTPException, Query, Request
 from typing import List, Optional
 from fastapi.responses import JSONResponse
 
@@ -13,15 +13,6 @@ from config import settings
 from services.soundcloud_service import soundcloud_service
 
 router = APIRouter(prefix="/api", tags=["anti-censorship"])
-
-# CORS Middleware для всех endpoints
-@router.middleware("http")
-async def add_cors_headers(request: Request, call_next):
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-    return response
 
 
 # ==================== Anti-Censorship / Blues Detection ====================

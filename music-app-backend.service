@@ -1,0 +1,17 @@
+[Unit]
+Description=Music App Backend
+After=network.target
+
+[Service]
+Type=simple
+User=c1ten12
+WorkingDirectory=/home/c1ten12/music-app/backend
+Environment="PATH=/home/c1ten12/music-app/backend/venv/bin"
+ExecStart=/home/c1ten12/music-app/backend/venv/bin/python -m uvicorn main_lite:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+StandardOutput=append:/tmp/music-app/backend.log
+StandardError=append:/tmp/music-app/backend.log
+
+[Install]
+WantedBy=multi-user.target

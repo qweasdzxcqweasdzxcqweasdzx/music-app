@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music App - Setup Instructions</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; background: #121212; color: white; }
+        h1 { color: #1db954; }
+        .step { background: #1e1e1e; padding: 20px; margin: 20px 0; border-radius: 10px; }
+        .command { background: #000; padding: 10px; border-radius: 5px; font-family: monospace; color: #1db954; }
+        .url { background: #1db954; color: #000; padding: 10px; border-radius: 5px; font-family: monospace; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🎵 Music App - Быстрая Настройка</h1>
+    
+    <div class="step">
+        <h2>📝 Шаг 1: Запустите ngrok</h2>
+        <p>Выполните эту команду в терминале:</p>
+        <div class="command">/home/c1ten12/run-ngrok.sh</div>
+        <p>Это займёт 2-3 минуты (скачивание + настройка)</p>
+    </div>
+    
+    <div class="step">
+        <h2>🌐 Шаг 2: Скопируйте HTTPS URL</h2>
+        <p>После запуска вы увидите:</p>
+        <div class="url">Forwarding: https://XXXX.ngrok-free.app</div>
+        <p>Скопируйте этот URL!</p>
+    </div>
+    
+    <div class="step">
+        <h2>✅ Шаг 3: Скажите URL ассистенту</h2>
+        <p>Ассистент автоматически обновит фронтенд и запушит на GitHub!</p>
+    </div>
+    
+    <div class="step">
+        <h2>🎉 Готово!</h2>
+        <p>Через 1-2 минуты приложение будет работать в Telegram и вебе!</p>
+    </div>
+</body>
+</html>

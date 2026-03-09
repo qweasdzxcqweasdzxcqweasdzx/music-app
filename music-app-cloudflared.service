@@ -1,0 +1,15 @@
+[Unit]
+Description=Music App Cloudflare Tunnel
+After=network.target music-app-cors.service
+
+[Service]
+Type=simple
+User=c1ten12
+ExecStart=/home/c1ten12/bin/cloudflared tunnel --url http://localhost:8081
+Restart=always
+RestartSec=10
+StandardOutput=append:/tmp/music-app/cloudflared.log
+StandardError=append:/tmp/music-app/cloudflared.log
+
+[Install]
+WantedBy=multi-user.target

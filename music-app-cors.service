@@ -1,0 +1,17 @@
+[Unit]
+Description=Music App CORS Proxy
+After=network.target music-app-backend.service
+
+[Service]
+Type=simple
+User=c1ten12
+WorkingDirectory=/home/c1ten12/music-app/backend
+Environment="PATH=/home/c1ten12/music-app/backend/venv/bin"
+ExecStart=/home/c1ten12/music-app/backend/venv/bin/python cors_proxy_8081.py
+Restart=always
+RestartSec=3
+StandardOutput=append:/tmp/music-app/cors.log
+StandardError=append:/tmp/music-app/cors.log
+
+[Install]
+WantedBy=multi-user.target

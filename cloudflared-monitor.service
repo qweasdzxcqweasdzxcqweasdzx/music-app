@@ -1,0 +1,15 @@
+[Unit]
+Description=Cloudflare Tunnel Auto-Restart Monitor
+After=network.target
+
+[Service]
+Type=simple
+User=c1ten12
+ExecStart=/home/c1ten12/music-app/cloudflared-monitor.sh
+Restart=always
+RestartSec=10
+StandardOutput=append:/tmp/cloudflared-monitor.log
+StandardError=append:/tmp/cloudflared-monitor.log
+
+[Install]
+WantedBy=multi-user.target

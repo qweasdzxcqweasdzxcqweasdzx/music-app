@@ -46,7 +46,7 @@ const Search = () => {
     const timer = setTimeout(() => {
       if (query.trim()) {
         setIsSearching(true);
-        fetch(`https://system-utility-trailer-president.trycloudflare.com/api/search?q=${encodeURIComponent(query)}`)
+        fetch(`https://carrier-conservative-operations-enhancements.trycloudflare.com/api/search?q=${encodeURIComponent(query)}`)
           .then(res => res.json())
           .then(data => {
             setSearchResults(data);

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { musicAPI } from '../api/musicApi';
 import './Search.css';
 
 const genreColors = [
@@ -34,6 +35,7 @@ const Search = () => {
   const [searchResults, setSearchResults] = useState({ tracks: [], artists: [], albums: [] });
   const [isSearching, setIsSearching] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
+  const searchTimeoutRef = useRef(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('recentSearches');
@@ -42,35 +44,58 @@ const Search = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (query.trim()) {
-        setIsSearching(true);
-        fetch(`https://carrier-conservative-operations-enhancements.trycloudflare.com/api/search?q=${encodeURIComponent(query)}`)
-          .then(res => res.json())
-          .then(data => {
-            setSearchResults(data);
-            setIsSearching(false);
-          })
-          .catch(() => {
-            setSearchResults({ tracks: [], artists: [], albums: [] });
-            setIsSearching(false);
-          });
+  const performSearch = useCallback(async (searchQuery) => {
+    if (!searchQuery.trim()) {
+      setSearchResults({ tracks: [], artists: [], albums: [] });
+      setIsSearching(false);
+      return;
+    }
 
-        // Save to recent searches
-        const saved = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-        if (!saved.includes(query)) {
-          saved.unshift(query);
-          localStorage.setItem('recentSearches', JSON.stringify(saved.slice(0, 10)));
-          setRecentSearches(saved.slice(0, 10));
-        }
+    setIsSearching(true);
+    try {
+      const data = await musicAPI.search(searchQuery, 20, 'all');
+      setSearchResults({
+        tracks: data.tracks || [],
+        artists: data.artists || [],
+        albums: data.albums || []
+      });
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults({ tracks: [], artists: [], albums: [] });
+    } finally {
+      setIsSearching(false);
+    }
+
+    // Save to recent searches
+    const saved = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    if (!saved.includes(searchQuery)) {
+      saved.unshift(searchQuery);
+      localStorage.setItem('recentSearches', JSON.stringify(saved.slice(0, 10)));
+      setRecentSearches(saved.slice(0, 10));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Debounce search
+    searchTimeoutRef.current = setTimeout(() => {
+      if (query.trim()) {
+        performSearch(query);
       } else {
         setSearchResults({ tracks: [], artists: [], albums: [] });
       }
     }, 500);
 
-    return () => clearTimeout(timer);
-  }, [query]);
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [query, performSearch]);
 
   const clearRecentSearches = () => {
     localStorage.removeItem('recentSearches');

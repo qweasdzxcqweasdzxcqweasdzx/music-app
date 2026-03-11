@@ -1,0 +1,96 @@
+.versionSwitcher {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.explicitBadge {
+  display: inline-flex;
+  align-items: center;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #ff5500;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.switcher {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2px;
+  overflow: hidden;
+}
+
+.versionBtn {
+  padding: 4px 12px;
+  background: transparent;
+  border: none;
+  color: #b3b3b3;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 18px;
+  transition: all 0.2s;
+}
+
+.versionBtn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.versionBtn.active {
+  background: #ff5500;
+  color: #fff;
+}
+
+.findContainer {
+  display: inline-block;
+}
+
+.findBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 85, 0, 0.1);
+  border: 1px solid rgba(255, 85, 0, 0.3);
+  border-radius: 20px;
+  color: #ff5500;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.findBtn:hover:not(:disabled) {
+  background: rgba(255, 85, 0, 0.2);
+  border-color: #ff5500;
+}
+
+.findBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 85, 0, 0.3);
+  border-top-color: #ff5500;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

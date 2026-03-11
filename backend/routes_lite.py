@@ -7,8 +7,9 @@ API Routes - Lite Version (Anti-Censorship endpoints)
 from fastapi import APIRouter, HTTPException, Query, Request
 from typing import List, Optional
 from fastapi.responses import JSONResponse
+import asyncio
 
-from models import Track
+from models_main import Track as TrackModel
 from config import settings
 from services.soundcloud_service import soundcloud_service
 
@@ -183,7 +184,7 @@ async def search_uncensored_tracks(
     
     # Если результатов нет, генерируем mock
     if not all_tracks:
-        from models import Track
+        from models_main import Track as TrackModel
         mock_titles = [
             f"{query} - Official Music Video",
             f"{query} - Live Performance",
@@ -255,9 +256,9 @@ async def analyze_batch_tracks(
     if not tracks:
         # Mock данные для демонстрации
         tracks = [
-            Track(id="1", title="Song 1 (Clean)", artist="Artist", duration=180, stream_url="", source="soundcloud"),
-            Track(id="2", title="Song 2 (Explicit)", artist="Artist", duration=200, stream_url="", source="youtube", is_explicit=True),
-            Track(id="3", title="Song 3 (Radio Edit)", artist="Artist", duration=190, stream_url="", source="soundcloud"),
+            TrackModel(id="1", title="Song 1 (Clean)", artist="Artist", duration=180, stream_url="", source="soundcloud"),
+            TrackModel(id="2", title="Song 2 (Explicit)", artist="Artist", duration=200, stream_url="", source="youtube", is_explicit=True),
+            TrackModel(id="3", title="Song 3 (Radio Edit)", artist="Artist", duration=190, stream_url="", source="soundcloud"),
         ]
 
     report = blues_detection_service.get_censorship_report(tracks)
@@ -301,7 +302,7 @@ async def get_censorship_statistics():
     if not all_tracks:
         # Mock данные
         all_tracks = [
-            Track(title=f"Track {i}", artist="Artist", duration=180, stream_url="", source="soundcloud", is_explicit=(i%3==0))
+            TrackModel(title=f"Track {i}", artist="Artist", duration=180, stream_url="", source="soundcloud", is_explicit=(i%3==0))
             for i in range(20)
         ]
 
@@ -404,7 +405,7 @@ async def test_censorship_api():
 
     results = []
     for test in test_tracks:
-        track = Track(title=test["title"], artist=test["artist"], duration=180, stream_url="")
+        track = TrackModel(title=test["title"], artist=test["artist"], duration=180, stream_url="")
         results.append({
             "title": test["title"],
             "is_censored": blues_detection_service.is_censored(track),
@@ -512,3 +513,529 @@ async def proxy_audio(video_id: str):
         return {"error": str(e)}
 
     return {"error": "Failed to proxy audio"}
+
+
+# ==================== Music Discovery Endpoints ====================
+
+@router.get("/top")
+async def get_top_tracks(limit: int = Query(default=20, le=100)):
+    """
+    Получить популярные треки (топ чарты)
+    
+    Args:
+        limit: Количество треков (макс. 100)
+    
+    Returns:
+        Список популярных треков
+    """
+    from services.soundcloud_service import soundcloud_service
+    import random
+    
+    # Пробуем быстро получить тренды с SoundCloud (с коротким таймаутом)
+    try:
+        result = await asyncio.wait_for(
+            soundcloud_service.get_trending(limit=limit),
+            timeout=5.0
+        )
+        if result and result.get('tracks'):
+            return {
+                "tracks": result['tracks'][:limit],
+                "total": len(result['tracks']),
+                "source": "soundcloud"
+            }
+    except asyncio.TimeoutError:
+        print("SoundCloud trending timeout, using mock data")
+    except Exception as e:
+        print(f"SoundCloud trending error: {e}")
+    
+    # Mock данные (быстрый ответ)
+    from models_main import Track as TrackModel
+    mock_tracks = []
+    artists = ["The Weeknd", "Dua Lipa", "Taylor Swift", "Ed Sheeran", "Ariana Grande", "Drake", "Billie Eilish"]
+    for i in range(min(limit, 20)):
+        mock_tracks.append(Track(
+            id=f"top_{i}",
+            title=f"Top Hit #{i+1}",
+            artist=random.choice(artists),
+            duration=random.randint(180, 240),
+            stream_url=f"https://youtube.com/watch?v=mock_top_{i}",
+            cover=f"https://img.youtube.com/vi/mock_top_{i}/hqdefault.jpg",
+            source="youtube",
+            play_count=random.randint(1000000, 10000000),
+            is_explicit=(i % 4 == 0)
+        ))
+    
+    return {
+        "tracks": mock_tracks,
+        "total": len(mock_tracks),
+        "source": "mock"
+    }
+
+
+@router.get("/new")
+async def get_new_releases(limit: int = Query(default=20, le=100)):
+    """
+    Получить новые релизы
+    
+    Args:
+        limit: Количество релизов (макс. 100)
+    
+    Returns:
+        Список новых треков
+    """
+    from services.soundcloud_service import soundcloud_service
+    import random
+    
+    # Пробуем получить новые треки с SoundCloud
+    try:
+        result = await soundcloud_service.get_new_hot(limit=limit)
+        if result and result.get('tracks'):
+            return {
+                "tracks": result['tracks'][:limit],
+                "total": len(result['tracks']),
+                "source": "soundcloud"
+            }
+    except Exception as e:
+        print(f"SoundCloud new releases error: {e}")
+    
+    # Mock данные
+    from models_main import Track as TrackModel
+    mock_tracks = []
+    genres = ["Pop", "Hip-Hop", "Electronic", "Rock", "R&B"]
+    for i in range(min(limit, 10)):
+        mock_tracks.append(Track(
+            id=f"new_{i}",
+            title=f"New Release #{i+1}",
+            artist=f"Artist {i+1}",
+            duration=random.randint(180, 240),
+            stream_url=f"https://soundcloud.com/artist/new_{i}",
+            cover=f"https://picsum.photos/seed/new_{i}/300/300",
+            source="soundcloud",
+            genre=random.choice(genres),
+            created_at="2026-03-10"
+        ))
+    
+    return {
+        "tracks": mock_tracks,
+        "total": len(mock_tracks),
+        "source": "mock"
+    }
+
+
+@router.get("/genres")
+async def get_all_genres():
+    """
+    Получить список всех доступных жанров
+    
+    Returns:
+        Список жанров с описанием
+    """
+    genres = [
+        {"id": "pop", "name": "Pop", "description": "Популярная музыка", "color": "#1DB954"},
+        {"id": "rock", "name": "Rock", "description": "Рок музыка", "color": "#E91429"},
+        {"id": "hiphop", "name": "Hip-Hop", "description": "Хип-хоп и рэп", "color": "#DC148C"},
+        {"id": "electronic", "name": "Electronic", "description": "Электронная музыка", "color": "#0D73EC"},
+        {"id": "indie", "name": "Indie", "description": "Инди музыка", "color": "#608108"},
+        {"id": "metal", "name": "Metal", "description": "Метал музыка", "color": "#BC5900"},
+        {"id": "jazz", "name": "Jazz", "description": "Джаз", "color": "#477D95"},
+        {"id": "classical", "name": "Classical", "description": "Классическая музыка", "color": "#8C67AC"},
+        {"id": "rnb", "name": "R&B", "description": "R&B и соул", "color": "#DC143C"},
+        {"id": "country", "name": "Country", "description": "Кантри музыка", "color": "#5F4A3C"},
+        {"id": "latin", "name": "Latin", "description": "Латинская музыка", "color": "#E91E63"},
+        {"id": "reggae", "name": "Reggae", "description": "Регги", "color": "#009688"},
+        {"id": "blues", "name": "Blues", "description": "Блюз", "color": "#3F51B5"},
+        {"id": "soul", "name": "Soul", "description": "Соул", "color": "#9C27B0"},
+        {"id": "funk", "name": "Funk", "description": "Фанк", "color": "#FF5722"},
+        {"id": "ambient", "name": "Ambient", "description": "Амбиент", "color": "#00BCD4"},
+        {"id": "house", "name": "House", "description": "Хаус", "color": "#FFC107"},
+        {"id": "techno", "name": "Techno", "description": "Техно", "color": "#607D8B"},
+        {"id": "trance", "name": "Trance", "description": "Транс", "color": "#9E9E9E"},
+        {"id": "dubstep", "name": "Dubstep", "description": "Дабстеп", "color": "#795548"},
+        {"id": "drum-and-bass", "name": "Drum & Bass", "description": "Драм-н-бейс", "color": "#3E2723"},
+        {"id": "kpop", "name": "K-Pop", "description": "Корейская поп музыка", "color": "#FF4081"},
+        {"id": "jpop", "name": "J-Pop", "description": "Японская поп музыка", "color": "#E040FB"},
+        {"id": "focus", "name": "Focus", "description": "Музыка для концентрации", "color": "#536DFE"},
+    ]
+    
+    return {
+        "genres": genres,
+        "total": len(genres)
+    }
+
+
+@router.get("/genres/{genre_id}")
+async def get_genre_tracks(
+    genre_id: str,
+    limit: int = Query(default=20, le=100)
+):
+    """
+    Получить треки определенного жанра
+    
+    Args:
+        genre_id: ID жанра
+        limit: Количество треков (макс. 100)
+    
+    Returns:
+        Список треков жанра
+    """
+    from services.soundcloud_service import soundcloud_service
+    import random
+    
+    genre_map = {
+        "pop": "pop music",
+        "rock": "rock music",
+        "hiphop": "hip hop rap",
+        "electronic": "electronic dance music",
+        "indie": "indie music",
+        "metal": "metal music",
+        "jazz": "jazz music",
+        "classical": "classical music",
+        "rnb": "r&b soul",
+        "country": "country music",
+        "latin": "latin music",
+        "reggae": "reggae music",
+        "blues": "blues music",
+        "soul": "soul music",
+        "funk": "funk music",
+        "ambient": "ambient music",
+        "house": "house music",
+        "techno": "techno music",
+        "trance": "trance music",
+        "dubstep": "dubstep",
+        "drum-and-bass": "drum and bass",
+        "kpop": "k-pop",
+        "jpop": "j-pop",
+        "focus": "focus concentration music"
+    }
+    
+    genre_name = genre_map.get(genre_id, genre_id)
+    
+    # Быстрый поиск на SoundCloud (с таймаутом)
+    try:
+        result = await asyncio.wait_for(
+            soundcloud_service.search(genre_name, limit=limit),
+            timeout=5.0
+        )
+        if result and result.get('tracks'):
+            return {
+                "tracks": result['tracks'][:limit],
+                "genre": genre_id,
+                "total": len(result['tracks']),
+                "source": "soundcloud"
+            }
+    except asyncio.TimeoutError:
+        print(f"SoundCloud genre search timeout for {genre_id}, using mock data")
+    except Exception as e:
+        print(f"SoundCloud genre search error: {e}")
+    
+    # Mock данные (быстрый ответ)
+    from models_main import Track as TrackModel
+    mock_tracks = []
+    for i in range(min(limit, 20)):
+        mock_tracks.append(Track(
+            id=f"{genre_id}_{i}",
+            title=f"{genre_name.title()} Track #{i+1}",
+            artist=f"{genre_name.title()} Artist",
+            duration=random.randint(180, 300),
+            stream_url=f"https://soundcloud.com/artist/{genre_id}_{i}",
+            cover=f"https://picsum.photos/seed/{genre_id}_{i}/300/300",
+            source="soundcloud",
+            genre=genre_id,
+            is_explicit=(i % 5 == 0)
+        ))
+
+    return {
+        "tracks": mock_tracks,
+        "genre": genre_id,
+        "total": len(mock_tracks),
+        "source": "mock"
+    }
+
+
+# ==================== Uncensored Track Finder API ====================
+
+@router.get("/uncensored/find")
+async def find_uncensored_version(
+    track_id: str,
+    title: str,
+    artist: str,
+    source: str = "soundcloud"
+):
+    """
+    Поиск нецензурированной версии трека
+    
+    Args:
+        track_id: ID трека
+        title: Название трека
+        artist: Исполнитель
+        source: Источник (youtube, soundcloud)
+    
+    Returns:
+        Информация о найденной uncensored версии
+    """
+    from services.uncensored_finder_service import uncensored_finder
+    from services.youtube_service import YouTubeMusicService
+    from services.soundcloud_service import soundcloud_service
+    
+    # Создаем mock трек для анализа
+    track = Track(
+        id=track_id,
+        title=title,
+        artist=artist,
+        duration=0,
+        stream_url="",
+        source=source
+    )
+    
+    # Проверка в базе
+    db_result = uncensored_finder.find_in_database(track)
+    if db_result:
+        return {
+            "status": "found",
+            "source": db_result["source"],
+            "confidence": db_result["confidence"],
+            "track": db_result["uncensored_track"]
+        }
+    
+    # Поиск через внешние сервисы
+    yt_service = YouTubeMusicService()
+    
+    result = await uncensored_finder.search_explicit_version(
+        track,
+        youtube_service=yt_service,
+        soundcloud_service=soundcloud_service
+    )
+    
+    if result:
+        return {
+            "status": "found",
+            "source": result["source"],
+            "confidence": result["confidence"],
+            "track": result["uncensored_track"],
+            "search_query": result.get("search_query", "")
+        }
+    
+    return {
+        "status": "not_found",
+        "message": "Не удалось найти нецензурированную версию"
+    }
+
+
+@router.post("/uncensored/add-pair")
+async def add_uncensored_pair(request: Request):
+    """
+    Добавление известной пары censored/uncensored в базу
+    
+    Args:
+        censored_title: Название цензурированной версии
+        uncensored_title: Название оригинальной версии
+        artist: Исполнитель
+        stream_url: URL для воспроизведения
+        source: Источник
+    
+    Returns:
+        Статус операции
+    """
+    from services.uncensored_finder_service import uncensored_finder
+    
+    # Чтение JSON body
+    import json
+    body = await request.json()
+    
+    censored_title = body.get("censored_title")
+    uncensored_title = body.get("uncensored_title")
+    artist = body.get("artist")
+    stream_url = body.get("stream_url")
+    source = body.get("source", "youtube")
+    
+    if not all([censored_title, uncensored_title, artist, stream_url]):
+        return {
+            "status": "error",
+            "message": "Missing required fields: censored_title, uncensored_title, artist, stream_url"
+        }
+    
+    uncensored_finder.add_known_pair(
+        censored_title=censored_title,
+        uncensored_title=uncensored_title,
+        artist=artist,
+        stream_url=stream_url,
+        source=source
+    )
+    
+    return {
+        "status": "success",
+        "message": f"Добавлена пара: '{censored_title}' -> '{uncensored_title}'"
+    }
+
+
+@router.get("/uncensored/check")
+async def check_track_censorship_status(
+    track_id: str,
+    title: str,
+    artist: str
+):
+    """
+    Проверка статуса цензуры трека
+    
+    Args:
+        track_id: ID трека
+        title: Название трека
+        artist: Исполнитель
+    
+    Returns:
+        Информация о цензуре трека
+    """
+    from services.uncensored_finder_service import uncensored_finder
+    from models_main import Track as TrackModel
+    
+    track = Track(
+        id=track_id,
+        title=title,
+        artist=artist,
+        duration=0,
+        stream_url="",
+        source="unknown"
+    )
+    
+    info = uncensored_finder.get_censorship_info(track)
+    
+    return info
+
+
+@router.get("/uncensored/playlist")
+async def find_uncensored_for_playlist(
+    track_ids: str,  # Comma-separated list
+    source: str = "soundcloud"
+):
+    """
+    Поиск uncensored версий для плейлиста
+    
+    Args:
+        track_ids: Список ID треков через запятую
+        source: Источник
+    
+    Returns:
+        Словарь {track_id: uncensored_info}
+    """
+    from services.uncensored_finder_service import uncensored_finder
+    from services.youtube_service import YouTubeMusicService
+    from services.soundcloud_service import soundcloud_service
+    from models_main import Track as TrackModel
+    
+    # Парсинг списка ID
+    ids = [id.strip() for id in track_ids.split(",") if id.strip()]
+    
+    # Создаем mock треки (в реальности нужно загружать из БД)
+    tracks = [
+        TrackModel(id=id, title=f"Track {id}", artist="Unknown", duration=0, stream_url="", source=source)
+        for id in ids[:20]  # Максимум 20 треков
+    ]
+    
+    yt_service = YouTubeMusicService()
+    
+    results = await uncensored_finder.find_uncensored_for_playlist(
+        tracks,
+        youtube_service=yt_service,
+        soundcloud_service=soundcloud_service
+    )
+    
+    return {
+        "total_tracks": len(ids),
+        "found_uncensored": len(results),
+        "results": results
+    }
+
+
+# ==================== Removed/Hidden Tracks API ====================
+
+@router.get("/removed/find")
+async def find_removed_track(
+    artist: str,
+    title: str
+):
+    """
+    Поиск удалённого/скрытого трека в базе
+    
+    Args:
+        artist: Исполнитель
+        title: Название трека/альбома
+    
+    Returns:
+        Информация о треке и альтернативные источники
+    """
+    import json
+    import os
+    
+    db_file = "removed_tracks_db.json"
+    if not os.path.exists(db_file):
+        return {
+            "status": "error",
+            "message": "База удалённых треков не найдена"
+        }
+    
+    with open(db_file, 'r', encoding='utf-8') as f:
+        removed_db = json.load(f)
+    
+    # Поиск по артисту и названию
+    for item in removed_db:
+        if (artist.lower() in item.get("artist", "").lower() and
+            title.lower() in item.get("title", "").lower()):
+            return {
+                "status": "found",
+                "item": item
+            }
+    
+    # Поиск только по артисту
+    matches = [item for item in removed_db if artist.lower() in item.get("artist", "").lower()]
+    if matches:
+        return {
+            "status": "partial",
+            "message": f"Найдено {len(matches)} записей для {artist}",
+            "items": matches[:10]
+        }
+    
+    return {
+        "status": "not_found",
+        "message": f"Не найдено информации об удалённых треках {artist} - {title}"
+    }
+
+
+@router.get("/removed/list")
+async def list_removed_tracks(
+    artist: Optional[str] = None,
+    type: Optional[str] = None
+):
+    """
+    Список всех удалённых треков
+    
+    Args:
+        artist: Фильтр по артисту (опционально)
+        type: Тип (album, track, catalog) - опционально
+    
+    Returns:
+        Список удалённых треков
+    """
+    import json
+    import os
+    
+    db_file = "removed_tracks_db.json"
+    if not os.path.exists(db_file):
+        return {
+            "status": "error",
+            "message": "База удалённых треков не найдена"
+        }
+    
+    with open(db_file, 'r', encoding='utf-8') as f:
+        removed_db = json.load(f)
+    
+    # Фильтрация
+    if artist:
+        removed_db = [item for item in removed_db if artist.lower() in item.get("artist", "").lower()]
+    
+    if type:
+        removed_db = [item for item in removed_db if item.get("type") == type]
+    
+    return {
+        "total": len(removed_db),
+        "items": removed_db
+    }

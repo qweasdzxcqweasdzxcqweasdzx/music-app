@@ -16,6 +16,8 @@ import Stats from './pages/Stats';
 import AIStudio from './pages/AIStudio';
 import SmartMixer from './pages/SmartMixer';
 import Sources from './pages/Sources';
+import GenreDetail from './pages/GenreDetail';
+import CensoredTracks from './pages/CensoredTracks';
 
 import './index.css';
 
@@ -84,6 +86,12 @@ function App() {
 
               {/* Источники */}
               <Route path="/sources" element={<Sources />} />
+
+              {/* Цензурированные треки */}
+              <Route path="/censored" element={<CensoredTracks />} />
+
+              {/* Жанры */}
+              <Route path="/genre/:genreId" element={<GenreDetail />} />
 
               {/* Полный плеер */}
               <Route path="/player" element={<FullPlayer />} />

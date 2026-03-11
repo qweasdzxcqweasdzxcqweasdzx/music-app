@@ -21,7 +21,7 @@ from typing import List, Optional, Dict, Tuple
 from difflib import SequenceMatcher
 from collections import Counter
 
-from models import Track
+from models_main import Track
 
 
 class BluesDetectionService:

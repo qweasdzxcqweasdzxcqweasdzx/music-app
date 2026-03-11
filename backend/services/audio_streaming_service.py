@@ -14,7 +14,7 @@ Audio Streaming Service
 
 import asyncio
 from typing import Optional, Dict, List
-from models import Track
+from models_main import Track
 
 
 class AudioStreamingService:

@@ -14,6 +14,7 @@ from config import settings
 from routes_lite import router  # Упрощенные роуты без MongoDB
 from routes_subsonic import router as subsonic_router  # Subsonic API совместимость
 from routes_api_keys import router as api_keys_router  # API-ключи
+from routes_censored_tracks import router as censored_tracks_router  # База цензурированных треков
 from services.cache_service import cache_service
 
 from fastapi.staticfiles import StaticFiles
@@ -79,6 +80,7 @@ if os.path.exists(static_path):
 app.include_router(router)
 app.include_router(subsonic_router)  # Subsonic API совместимость
 app.include_router(api_keys_router)  # API-ключи
+app.include_router(censored_tracks_router)  # База цензурированных треков
 
 
 @app.get("/")
@@ -96,13 +98,15 @@ async def root():
             "Fuzzy Matching",
             "Multi-platform Search",
             "Subsonic API Compatible ✓",
-            "API Keys Authentication ✓"
+            "API Keys Authentication ✓",
+            "Censored Tracks Database ✓"
         ],
         "api_docs": "/docs",
         "api_endpoints": {
             "main": "/api/*",
             "subsonic": "/rest/*",
-            "api_keys": "/api/keys"
+            "api_keys": "/api/keys",
+            "censored_tracks": "/api/censored-tracks"
         },
         "new_endpoints": [
             "/api/censorship/check",
@@ -113,6 +117,8 @@ async def root():
             "/api/censorship/replace-censored",
             "/api/keys",
             "/api/keys/test",
+            "/api/censored-tracks",
+            "/api/censored-tracks/stats",
             "/rest/ping.view",
             "/rest/getArtists.view",
             "/rest/getAlbumList.view"
@@ -153,7 +159,7 @@ async def health_check():
 async def test_blues_detection():
     """Тест системы Anti-Censorship"""
     from services.blues_detection_service import blues_detection_service
-    from models import Track
+    from models_main import Track
     
     # Тестовые треки
     test_tracks = [

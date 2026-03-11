@@ -49,10 +49,10 @@ export function PlayerProvider({ children }) {
     // Восстановление из localStorage
     const savedVolume = localStorage.getItem('volume');
     if (savedVolume) setVolumeState(parseFloat(savedVolume));
-    
+
     const savedShuffle = localStorage.getItem('shuffle');
     if (savedShuffle) setShuffle(JSON.parse(savedShuffle));
-    
+
     const savedRepeat = localStorage.getItem('repeat');
     if (savedRepeat) setRepeat(savedRepeat);
 
@@ -62,11 +62,23 @@ export function PlayerProvider({ children }) {
     audio.preload = 'metadata';
     setAudioElement(audio);
 
+    // Обработчик события play-track от других компонентов
+    const handlePlayTrackEvent = (event) => {
+      const track = event.detail;
+      if (track) {
+        playTrack(track);
+      }
+    };
+
+    window.addEventListener('play-track', handlePlayTrackEvent);
+
     return () => {
       if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
       audio.pause();
       audio.src = '';
+      window.removeEventListener('play-track', handlePlayTrackEvent);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Обработчики аудио элемента

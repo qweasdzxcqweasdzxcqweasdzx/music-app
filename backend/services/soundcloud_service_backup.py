@@ -18,7 +18,7 @@ import aiohttp
 import base64
 import time
 from typing import List, Optional, Dict, Any
-from models import Track, Artist as ArtistModel
+from models_main import Track, Artist as ArtistModel
 from config import settings
 
 

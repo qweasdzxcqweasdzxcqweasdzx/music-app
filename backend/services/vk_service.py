@@ -17,7 +17,7 @@ import aiohttp
 import hashlib
 import time
 from typing import List, Optional, Dict
-from models import Track
+from models_main import Track
 
 
 class VKMusicService:

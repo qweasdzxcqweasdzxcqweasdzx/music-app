@@ -10,7 +10,7 @@ Coverage:
 
 import pytest
 from datetime import datetime
-from models import Track
+from models_main import Track
 from services.censorship_service import (
     AdvancedCensorshipService,
     TextClassifier,

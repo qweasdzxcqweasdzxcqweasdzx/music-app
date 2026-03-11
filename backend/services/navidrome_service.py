@@ -20,7 +20,7 @@ import aiohttp
 import hashlib
 import base64
 from typing import List, Optional, Dict, Any
-from models import Track, Artist as ArtistModel, Album as AlbumModel
+from models_main import Track, Artist as ArtistModel, Album as AlbumModel
 from config import settings
 
 

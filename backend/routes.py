@@ -4,7 +4,7 @@ from typing import List, Optional
 from bson import ObjectId
 from datetime import datetime, timedelta
 
-from models import (
+from models_main import (
     User, UserCreate, Track, Playlist, PlaylistCreate,
     SearchResponse, SearchAllResponse, Artist, Album, Single,
     RecommendationRequest, RecommendationResponse, GenreResponse, Genre
@@ -577,7 +577,7 @@ async def add_to_history(
     current_user: dict = Depends(get_current_user)
 ):
     """Добавление в историю"""
-    from models import PlayHistory
+    from models_main import PlayHistory
     from datetime import datetime
 
     history_collection = await get_collection("play_history")
@@ -611,7 +611,7 @@ async def add_like(
     current_user: dict = Depends(get_current_user)
 ):
     """Добавление лайка"""
-    from models import Like
+    from models_main import Like
 
     likes_collection = await get_collection("likes")
 

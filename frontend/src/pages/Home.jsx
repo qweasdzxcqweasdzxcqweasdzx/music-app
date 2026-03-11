@@ -24,11 +24,28 @@ const Home = () => {
     // Загрузка данных
     const loadData = async () => {
       try {
-        const trending = await musicAPI.getTopTracks(10);
-        setTrendingTracks(trending.tracks || []);
+        const [trending, genres] = await Promise.allSettled([
+          musicAPI.getTopTracks(10),
+          musicAPI.getGenres()
+        ]);
 
-        const playlists = await musicAPI.getFeaturedPlaylists(6);
-        setFeaturedPlaylists(playlists.playlists || []);
+        if (trending.status === 'fulfilled') {
+          setTrendingTracks(trending.value.tracks || []);
+        } else {
+          console.warn('Failed to load trending tracks:', trending.error);
+        }
+
+        // Плейлисты по жанрам
+        if (genres.status === 'fulfilled') {
+          const genreList = genres.value.genres || [];
+          setFeaturedPlaylists(genreList.slice(0, 6).map(g => ({
+            id: g.id,
+            title: g.name,
+            description: g.description,
+            cover: `https://picsum.photos/seed/${g.id}/300/300`,
+            type: 'genre'
+          })));
+        }
       } catch (error) {
         console.error('Error loading home data:', error);
       } finally {
@@ -115,10 +132,16 @@ const Home = () => {
           </div>
           <div className="cards-grid">
             {featuredPlaylists.map((playlist, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="card"
-                onClick={() => navigate(`/playlist/${playlist.id}`)}
+                onClick={() => {
+                  if (playlist.type === 'genre') {
+                    navigate(`/genre/${playlist.id}`);
+                  } else {
+                    navigate(`/playlist/${playlist.id}`);
+                  }
+                }}
               >
                 <div className="card-image">
                   <img 

@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from collections import Counter
 import random
 
-from models import Track, PlayHistory, Like
+from models_main import Track, PlayHistory, Like
 from database import get_collection
 from services.soundcloud_service import soundcloud_service
 from config import settings

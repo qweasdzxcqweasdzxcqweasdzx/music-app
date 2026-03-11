@@ -8,7 +8,7 @@ YouTube Music Service
 import re
 import asyncio
 from typing import List, Optional, Dict, Any
-from models import Track
+from models_main import Track
 
 # Попытка импорта yt-dlp
 try:

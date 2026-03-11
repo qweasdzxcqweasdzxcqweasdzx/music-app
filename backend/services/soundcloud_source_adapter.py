@@ -7,7 +7,7 @@ SoundCloud Service Adapter
 from typing import List, Optional, Dict
 from services.music_source_base import MusicSource
 from services.soundcloud_service import soundcloud_service as sc_service
-from models import Track
+from models_main import Track
 
 
 class SoundCloudSource(MusicSource):

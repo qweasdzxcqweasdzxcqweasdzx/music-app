@@ -22,17 +22,17 @@ async def proxy(request: Request, path: str):
     
     body = await request.body()
     
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=60.0) as client:
         if request.method == "GET":
-            resp = await client.get(url, headers=headers, params=request.query_params, timeout=30)
+            resp = await client.get(url, headers=headers, params=request.query_params, timeout=60)
         elif request.method == "POST":
-            resp = await client.post(url, headers=headers, json=await request.json() if body else None, params=request.query_params, timeout=30)
+            resp = await client.post(url, headers=headers, json=await request.json() if body else None, params=request.query_params, timeout=60)
         elif request.method == "PUT":
-            resp = await client.put(url, headers=headers, json=await request.json() if body else None, params=request.query_params, timeout=30)
+            resp = await client.put(url, headers=headers, json=await request.json() if body else None, params=request.query_params, timeout=60)
         elif request.method == "DELETE":
-            resp = await client.delete(url, headers=headers, params=request.query_params, timeout=30)
+            resp = await client.delete(url, headers=headers, params=request.query_params, timeout=60)
         else:
-            resp = await client.request(request.method, url, headers=headers, content=body, params=request.query_params, timeout=30)
+            resp = await client.request(request.method, url, headers=headers, content=body, params=request.query_params, timeout=60)
     
     return Response(
         content=resp.content,

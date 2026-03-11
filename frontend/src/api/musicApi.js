@@ -3,8 +3,8 @@
  * SoundCloud API + Telegram Mini Apps
  */
 
-// HTTPS URL через Cloudflare Tunnel + CORS Proxy (порт 8081)
-const API_URL = 'https://carrier-conservative-operations-enhancements.trycloudflare.com/api';
+// Используем переменную окружения VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081/api';
 
 class MusicAPI {
   constructor() {
@@ -80,11 +80,17 @@ class MusicAPI {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
     try {
       const response = await fetch(url, {
         ...options,
         headers,
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (response.status === 401) {
         this.removeToken();
@@ -99,7 +105,11 @@ class MusicAPI {
 
       return await response.json();
     } catch (error) {
-      console.error(`API Error (${endpoint}):`, error);
+      if (error.name === 'AbortError') {
+        console.error(`API Timeout (${endpoint}): Request timed out after 30s`);
+        throw new Error('Request timed out. Please try again.');
+      }
+      console.error(`API Error (${endpoint}):`, error.message || error);
       throw error;
     }
   }
@@ -526,6 +536,48 @@ class MusicAPI {
 
   async getTaskStatus(taskId) {
     return this.request(`/tasks/status/${taskId}`);
+  }
+
+  // ==================== Uncensored Track Finder ====================
+
+  /**
+   * Поиск нецензурированной версии трека
+   */
+  async findUncensoredVersion(trackId, title, artist, source = 'soundcloud') {
+    const params = new URLSearchParams({ track_id: trackId, title, artist, source });
+    return this.request(`/uncensored/find?${params}`);
+  }
+
+  /**
+   * Добавление пары censored/uncensored в базу
+   */
+  async addUncensoredPair(censoredTitle, uncensoredTitle, artist, streamUrl, source = 'youtube') {
+    return this.request('/uncensored/add-pair', {
+      method: 'POST',
+      body: JSON.stringify({
+        censored_title: censoredTitle,
+        uncensored_title: uncensoredTitle,
+        artist,
+        stream_url: streamUrl,
+        source,
+      }),
+    });
+  }
+
+  /**
+   * Проверка статуса цензуры трека
+   */
+  async getTrackCensorshipInfo(trackId, title, artist) {
+    const params = new URLSearchParams({ track_id: trackId, title, artist });
+    return this.request(`/uncensored/check?${params}`);
+  }
+
+  /**
+   * Поиск uncensored версий для плейлиста
+   */
+  async findUncensoredForPlaylist(trackIds, source = 'soundcloud') {
+    const params = new URLSearchParams({ track_ids: trackIds.join(','), source });
+    return this.request(`/uncensored/playlist?${params}`);
   }
 }
 

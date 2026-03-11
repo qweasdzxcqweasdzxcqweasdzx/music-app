@@ -7,7 +7,7 @@ Music Source Base Module
 
 from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Any
-from models import Track
+from models_main import Track
 
 
 class MusicSource(ABC):

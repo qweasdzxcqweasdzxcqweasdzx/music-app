@@ -8,7 +8,7 @@ import aiohttp
 import re
 import json
 from typing import List, Optional, Dict
-from models import Track
+from models_main import Track
 
 
 class SoundCloudService:

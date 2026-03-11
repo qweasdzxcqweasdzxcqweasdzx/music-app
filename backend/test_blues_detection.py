@@ -9,7 +9,7 @@ import asyncio
 import sys
 sys.path.insert(0, '/home/c1ten12/music-app/backend')
 
-from models import Track
+from models_main import Track
 from services.blues_detection_service import blues_detection_service
 
 

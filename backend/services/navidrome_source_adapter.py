@@ -7,7 +7,7 @@ Navidrome Service Adapter
 from typing import List, Optional, Dict
 from services.music_source_base import MusicSource
 from services.navidrome_service import navidrome_service as nd_service
-from models import Track
+from models_main import Track
 
 
 class NavidromeSource(MusicSource):
